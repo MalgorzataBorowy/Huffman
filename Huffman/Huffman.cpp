@@ -4,16 +4,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
+#include <algorithm>
+#include "Huffman_func.h"
+
 
 using namespace std;
-
-struct Node
-{
-	Node* left;
-	Node* right;
-	int count;
-	char letter;
-};
 
 string readFile(string fileName)
 {
@@ -36,72 +32,118 @@ string readFile(string fileName)
 	return text;
 }
 
-void makeList(string text, Node* ptr)
+int countOccur(string text)
 {
-
-}
-void bubbleSort(Node* tab, int n)
-{
-	bool swapped; // Czy zamieniono w ostatnim obrocie?
-
-	do {
-		swapped = false;
-		for (int i = 0; i < n - 1; ++i) {
-			if (tab[i].count < tab[i + 1].count) {
-				swap(tab[i], tab[i + 1]);
-				swapped = true;
+	int count = 0;
+	char tab[256] = { 0 };
+	for (int i = 0; i < text.length(); i++)
+	{
+		bool exists = false;
+		for (int j = 0; j < count+1; j++)
+		{
+			if (tab[j] == text[i])
+			{
+				exists = true;
+				break;
 			}
 		}
-	} while (swapped);
+		if (!exists)
+		{
+			tab[count] = text[i];
+			count++;
+		}
+	}
+
+	return count;
 }
+void printVector(vector<Node>* tab)
+{
+	Node* ptr = &tab->front();
+
+	for (int i = 0; i < tab->size(); i++)
+	{
+		cout << ptr->letter << ptr->count <<" ";
+		ptr++;
+	}
+	cout<<endl;
+}
+
+Node* makeTree(vector<Node>* tab)
+{
+	vector<Node>* ptr = tab;
+	Node* root = &(ptr->back());
+	Node* first = NULL;
+	Node* second = NULL;
+	while (ptr->size() > 1)
+	{
+		first = &(ptr->back());
+		ptr->pop_back();
+		second = &(ptr->back());
+		ptr->pop_back();
+		root = new Node;
+		root->left = first;
+		root->right = second;
+		root->count = first->count + second->count;
+		root->letter = NULL;
+		//struct Node n = { first, second, first->count + second->count, NULL };
+		//ptr->insert(upper_bound(ptr->begin(), ptr->end(),root,),root);
+		for (int i = 0; i < ptr->size(); i++)
+		{
+			if ((ptr->begin() + i)->count < root->count)
+			{
+				ptr->insert(ptr->begin()+i, *root);
+				break;
+			}
+		}
+		if (ptr->size() < 1)
+		{
+			ptr->insert(ptr->begin(), *root);
+		}
+		//ptr->push_back(*root);
+		//bubbleSort(ptr);
+		printVector(ptr);
+	}
+	root = &(ptr->back());
+	return  root;
+}
+
+void printTree(Node* root)
+{
+	if (!root->left) cout << root->letter << " "<< root->count<<endl;
+	else
+	{
+		cout << root->letter << " " << root->count << endl;
+		printTree(root->left);
+		printTree(root->right);
+	}
+}
+
+string codeText(string text)
+{
+	return "";
+}
+string codeLetter(char letter, Node* root, string code)
+{
+	
+
+	return code;
+}
+
 
 int main()
 {
 
 	string text = readFile("tekst.txt");
-	/*struct Node nodes[256];
-	struct Node* nodePtr = &nodes[0];
-	makeList(text, nodePtr);*/
+	int size = countOccur(text);
 
+	vector<Node> nodes;
+	//vector<>
+	fillList(text, &nodes);
+	bubbleSort(&nodes);
 
-	struct Node nodes[256];
-	struct Node* ptr = &nodes[0];
-	for (int i = 0; i < 256; i++)
-	{
-		struct Node n = { NULL, NULL, 0, NULL };
-		nodes[i] = n;
-	}
+	Node* root = makeTree(&nodes);
 
-
-	for (int i = 0; i < text.length(); i++)
-	{
-		bool flag = false;
-		for (int j = 0; j < 256; j++)
-		{
-			if (nodes[j].letter == text[i])
-			{
-				nodes[j].count++;
-				flag = true;
-			}
-		}
-		if (!flag)
-		{
-			ptr->left = NULL;
-			ptr->right = NULL;
-			ptr->count = 1;
-			ptr->letter = text[i];
-			ptr++;
-		}
-	}
-
-	bubbleSort(nodes, 256);
-
-
-	for (int i = 0; i < 256; i++)
-	{
-		cout << "Letter: " << nodes[i].letter << "; count: " << nodes[i].count << endl;
-	}
-
+	printVector(&nodes);
 
 
 }
