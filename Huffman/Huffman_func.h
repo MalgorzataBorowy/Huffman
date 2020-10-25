@@ -12,5 +12,6 @@ struct Node
 	int count;
 	char letter;
 };
-void fillList(string text, vector<Node>* tab);
-void bubbleSort(vector<Node>* tab);
+void fillList(string text, vector<Node*>* tab);
+void bubbleSort(vector<Node*>* tab);
+Node** makeTree(vector<Node*>* tab);

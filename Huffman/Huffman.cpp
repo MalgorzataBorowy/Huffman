@@ -1,13 +1,10 @@
 ﻿// Huffman.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
 //
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
-#include <algorithm>
 #include "Huffman_func.h"
-
 
 using namespace std;
 
@@ -56,65 +53,25 @@ int countOccur(string text)
 
 	return count;
 }
-void printVector(vector<Node>* tab)
+void printVector(vector<Node*>* tab)
 {
-	Node* ptr = &tab->front();
+	Node** ptr = &tab->front();
 
 	for (int i = 0; i < tab->size(); i++)
 	{
-		cout << ptr->letter << ptr->count <<" ";
+		cout << (*ptr)->letter << (*ptr)->count <<" ";
 		ptr++;
 	}
 	cout<<endl;
 }
 
-Node* makeTree(vector<Node>* tab)
+void printTree(Node* root, string b)
 {
-	vector<Node>* ptr = tab;
-	Node* root = &(ptr->back());
-	Node* first = NULL;
-	Node* second = NULL;
-	while (ptr->size() > 1)
+	if (root->left != NULL)
 	{
-		first = &(ptr->back());
-		ptr->pop_back();
-		second = &(ptr->back());
-		ptr->pop_back();
-		root = new Node;
-		root->left = first;
-		root->right = second;
-		root->count = first->count + second->count;
-		root->letter = NULL;
-		//struct Node n = { first, second, first->count + second->count, NULL };
-		//ptr->insert(upper_bound(ptr->begin(), ptr->end(),root,),root);
-		for (int i = 0; i < ptr->size(); i++)
-		{
-			if ((ptr->begin() + i)->count < root->count)
-			{
-				ptr->insert(ptr->begin()+i, *root);
-				break;
-			}
-		}
-		if (ptr->size() < 1)
-		{
-			ptr->insert(ptr->begin(), *root);
-		}
-		//ptr->push_back(*root);
-		//bubbleSort(ptr);
-		printVector(ptr);
-	}
-	root = &(ptr->back());
-	return  root;
-}
-
-void printTree(Node* root)
-{
-	if (!root->left) cout << root->letter << " "<< root->count<<endl;
-	else
-	{
-		cout << root->letter << " " << root->count << endl;
-		printTree(root->left);
-		printTree(root->right);
+		printTree(root->left, b = "0");
+		cout << root->letter << b;
+		printTree(root->right, b = "1");
 	}
 }
 
@@ -132,18 +89,15 @@ string codeLetter(char letter, Node* root, string code)
 
 int main()
 {
-
 	string text = readFile("tekst.txt");
 	int size = countOccur(text);
 
-	vector<Node> nodes;
-	//vector<>
+	vector<Node *> nodes;
 	fillList(text, &nodes);
 	bubbleSort(&nodes);
+	Node** root = makeTree(&nodes);
 
-	Node* root = makeTree(&nodes);
-
-	printVector(&nodes);
+	//printTree(*root, "");
 
 
 }
