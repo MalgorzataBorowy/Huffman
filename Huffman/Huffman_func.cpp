@@ -1,5 +1,91 @@
 #include "Huffman_func.h"
 
+string readFile(string fileName)
+{
+	string text = "", line;
+	fstream file;
+	file.open(fileName, ios::in);
+	if (file.good() == true)
+	{
+		do
+		{
+			getline(file, line);
+			text += line;
+
+		} while (line != "");
+	}
+	else
+		cout << "Brak dostepu do pliku" << endl;
+
+	file.close();
+	return text;
+}
+
+void writeToFile(string text, string fileName)
+{
+	fstream file;
+	char* buffer = new char[text.length()];
+	file.open(fileName, ios::out | ios::binary);
+	if (file.good() == true)
+	{
+		unsigned char buffer = 0;
+		int count = 0;
+		int i = 0;
+		while (text[i] != '\0')
+		{
+			buffer = buffer | ((text[i++] - '0') << (7 - count));
+			count++;
+			if (count == 8)
+			{
+				count = 0;
+				file << buffer;
+				buffer = 0;
+			}
+		}
+		if (count != 0)
+			file << buffer;
+
+	}
+	file.close();
+}
+
+int countOccur(string text)
+{
+	int count = 0;
+	char tab[256] = { 0 };
+	for (int i = 0; i < text.length(); i++)
+	{
+		bool exists = false;
+		for (int j = 0; j < count + 1; j++)
+		{
+			if (tab[j] == text[i])
+			{
+				exists = true;
+				break;
+			}
+		}
+		if (!exists)
+		{
+			tab[count] = text[i];
+			count++;
+		}
+	}
+
+	return count;
+}
+
+void printVector(vector<Node*>* tab)
+{
+	Node** ptr = &tab->front();
+
+	for (int i = 0; i < tab->size(); i++)
+	{
+		cout << (*ptr)->letter << (*ptr)->count << " ";
+		ptr++;
+	}
+	cout << endl;
+}
+
 void fillList(string text, vector<Node *> *tab)
 {
 	vector<Node*>* ptr = tab;
@@ -49,7 +135,7 @@ void bubbleSort(vector<Node*>* tab)
 	} while (swapped);
 }
 
-Node** makeTree(vector<Node*>* tab)
+Node* makeTree(vector<Node*>* tab)
 {
 	vector<Node*>* ptr = tab;
 	Node** root = &(ptr->back());
@@ -71,5 +157,32 @@ Node** makeTree(vector<Node*>* tab)
 		bubbleSort(ptr);
 	}
 	root = &(ptr->back());
-	return  root;
+	return  *root;
+}
+
+bool codeLetter(char letter, Node* root, string code, string &retCode)
+{
+	if (!root->left)
+	{
+		if (letter != root->letter) return false;
+		else
+		{
+			retCode = code;
+			return true;
+		}
+	}
+	else
+		return codeLetter(letter, root->left, code + "0", retCode) || codeLetter(letter, root->right, code + "1", retCode);
+}
+
+string codeText(string text, Node* root)
+{
+	string codedText = "";
+	for (int i = 0; i < text.length(); i++)
+	{
+		string code = "";
+		bool codeed = codeLetter(text[i], root, "", code);
+		codedText = codedText + code;
+	}
+	return codedText;
 }
