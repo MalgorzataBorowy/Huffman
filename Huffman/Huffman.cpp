@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include<map>
 #include "Huffman_func.h"
 
 using namespace std;
@@ -18,18 +19,26 @@ void printTree(Node* root, string b)
 	}
 }
 
-int main()
+int main(int argc, char* argv[], char* envp[])
 {
 	string text = readFile("tekst.txt");
-	int size = countOccur(text);
+	int size = countFrequency(text);
 
 	vector<Node *> nodes;
 	fillList(text, &nodes);
 	bubbleSort(&nodes);
+
+
+	vector<char> letterList;
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		letterList.push_back(nodes[i]->letter);
+	}
+
 	Node* root = makeTree(&nodes);
 	string codedText = codeText(text, root);
-	writeToFile(codedText, "tekst(1).bin");
-	//printTree(root, "");
-
-	   
+	writeToFile(codedText, "tekst(1).txt");
+	saveToDictionary(root, &letterList);
+	string decodedText = decodeText(codedText, "dictionary.txt");
+	cout << decodedText<< endl;	   
 }

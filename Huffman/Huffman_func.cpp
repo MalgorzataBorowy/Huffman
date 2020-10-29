@@ -49,7 +49,7 @@ void writeToFile(string text, string fileName)
 	file.close();
 }
 
-int countOccur(string text)
+int countFrequency(string text)
 {
 	int count = 0;
 	char tab[256] = { 0 };
@@ -111,7 +111,6 @@ void fillList(string text, vector<Node *> *tab)
 			n->count = 1;
 			n->letter = text[i];
 
-			//struct Node n = { NULL, NULL, 1, text[i] };
 			ptr->push_back(&*n);
 		}
 	}
@@ -185,4 +184,92 @@ string codeText(string text, Node* root)
 		codedText = codedText + code;
 	}
 	return codedText;
+}
+void saveToDictionary(Node* root, vector<char>* tab)
+{
+	Node* tree = root;
+	vector<string> codes(tab->size());
+	vector<char>* letters = tab;
+	string text = "";
+	for (int i = 0; i < tab->size(); i++)
+	{
+		codeLetter(letters->at(i), tree, "", codes[i]);
+		text += letters->at(i) + codes[i] + '\n';
+	}
+
+	fstream file;
+	file.open("dictionary.txt", ios::out);
+	if (file.good() == true)
+	{
+		file << text;
+	}
+	else
+		cout << "Brak dostepu do pliku" << endl;
+
+	file.close();
+}
+
+string decodeText(string codedText, Node* root)
+{
+	string decodedText = "";
+	Node* node = root;
+	for (int i = 0; i < codedText.length(); i++)
+	{
+		if (codedText[i] == '0')
+		{
+			node = node->left;
+		}
+		else if (codedText[i] == '1')
+		{
+			node = node->right;
+		}
+		if (!node->left && !node->right)
+		{
+			decodedText += node->letter;
+			node = root;
+		}
+	}
+	decodedText += "\0";
+	return decodedText;
+}
+
+string decodeText(string codedText, string dictFileName)
+{
+	vector<char> letters;
+	vector<string> codes;
+	string retText;
+	fstream file;
+	file.open(dictFileName, ios::in);
+	if (file.good() == true)
+	{
+		string line;
+		do
+		{
+			getline(file, line);
+			letters.push_back(line[0]);
+			codes.push_back("");
+			for (int i = 1; i < line.length(); i++)
+			{
+				codes.back() += line[i];
+			}
+		} while (line != "\0");
+	}
+	else
+		cout << "Brak dostepu do pliku" << endl;
+
+	string codedLetter = "";
+	for (int i = 0; i < codedText.size(); i++)
+	{
+		codedLetter += codedText[i];
+		for (int j = 0; j < codes.size(); j++)
+		{
+			if (codedLetter == codes[j])
+			{
+				retText += letters[j];
+				codedLetter = "";
+				break;
+			}
+		}
+	}
+	return retText;
 }

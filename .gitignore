@@ -1,9 +1,12 @@
 .vs/
 Debug/
+Release/
 Huffman/Debug
+Huffman/Release
 Huffman/Huffman.vcxproj
 Huffman/Huffman.vcxproj.filters
 Huffman/Huffman.vcxproj.user
 tekst(1).txt
 tekst.txt
+dictionary.txt
 
