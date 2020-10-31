@@ -7,6 +7,7 @@
 using namespace std;
 
 string readFile(string fileName);
+string readBinFile(string fileName);
 void writeFile(string text, string fileName);
 void writeBinFile(string text, string fileName);
 void saveToDictionary(Node* root, vector<char>* tab);

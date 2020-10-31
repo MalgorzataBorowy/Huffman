@@ -10,10 +10,7 @@ int countFrequency(string text)
 		for (int j = 0; j < count + 1; j++)
 		{
 			if (tab[j] == text[i])
-			{
-				exists = true;
-				break;
-			}
+				exists = true; break;
 		}
 		if (!exists)
 		{
@@ -176,10 +173,10 @@ string decodeText(string codedText, string dictFileName)
 			getline(file, line);
 			letters.push_back(line[0]);
 			codes.push_back("");
+
 			for (int i = 1; i < line.length(); i++)
-			{
 				codes.back() += line[i];
-			}
+
 		} while (line != "\0");
 	}
 	else

@@ -9,22 +9,6 @@
 
 using namespace std;
 
-string readBinFile(string fileName)
-{
-	string text = "", line;
-	fstream file;
-	file.open(fileName, ios::in | ios::binary);
-	if (file.good() == true)
-	{
-
-	}
-	else
-		cout << "Brak dostepu do pliku" << endl;
-
-	file.close();
-	return text;
-}
-
 int main(int argc, char* argv[])
 {
 	string fileName = "tekst.txt";
@@ -58,11 +42,7 @@ int main(int argc, char* argv[])
 		{
 			string text = readFile(fileName);
 			if (text.length() < 1)
-			{
-				cout << "Nieprawidlowa sciezka pliku wejsciowego" << endl;
-				break;
-			}
-			//int size = countFrequency(text);
+				cout << "Nieprawidlowa sciezka pliku wejsciowego" << endl; break;
 
 			vector<Node*> nodes;
 			fillList(text, &nodes);
@@ -70,9 +50,7 @@ int main(int argc, char* argv[])
 
 			vector<char> letterList;
 			for (int i = 0; i < nodes.size(); i++)
-			{
 				letterList.push_back(nodes[i]->letter);
-			}
 
 			Node* root = makeTree(&nodes);
 			string codedText = codeText(text, root);
@@ -84,18 +62,14 @@ int main(int argc, char* argv[])
 
 		case('d'):
 		{	
-			string codedText = readBinFile(fileName);
+			string codedText = readBinFile(newFileName);
 			string decodedText = decodeText(codedText, dictFileName);
-			std::cout << decodedText<< endl;
-			writeFile(decodedText, newFileName);
+			writeFile(decodedText, fileName);
 			break;
 		}
 
 		default:
-		{
-			cout << "Nierawidlowy tryb" << endl;
-			break;
-		}
+			cout << "Nierawidlowy tryb" << endl; break;
 		}
 	}
 	return 0;
