@@ -1,54 +1,5 @@
 #include "Huffman_func.h"
 
-string readFile(string fileName)
-{
-	string text = "", line;
-	fstream file;
-	file.open(fileName, ios::in);
-	if (file.good() == true)
-	{
-		do
-		{
-			getline(file, line);
-			text += line;
-
-		} while (line != "");
-	}
-	else
-		cout << "Brak dostepu do pliku" << endl;
-
-	file.close();
-	return text;
-}
-
-void writeToFile(string text, string fileName)
-{
-	fstream file;
-	char* buffer = new char[text.length()];
-	file.open(fileName, ios::out | ios::binary);
-	if (file.good() == true)
-	{
-		unsigned char buffer = 0;
-		int count = 0;
-		int i = 0;
-		while (text[i] != '\0')
-		{
-			buffer = buffer | ((text[i++] - '0') << (7 - count));
-			count++;
-			if (count == 8)
-			{
-				count = 0;
-				file << buffer;
-				buffer = 0;
-			}
-		}
-		if (count != 0)
-			file << buffer;
-
-	}
-	file.close();
-}
-
 int countFrequency(string text)
 {
 	int count = 0;
@@ -146,7 +97,7 @@ Node* makeTree(vector<Node*>* tab)
 		ptr->pop_back();
 		second = &(ptr)->back();
 		ptr->pop_back();
-		Node* n = new Node;
+		Node *n = new Node;
 		n->left = *first;
 		n->right = *second;
 		n->count = (*first)->count + (*second)->count;
@@ -184,29 +135,6 @@ string codeText(string text, Node* root)
 		codedText = codedText + code;
 	}
 	return codedText;
-}
-void saveToDictionary(Node* root, vector<char>* tab)
-{
-	Node* tree = root;
-	vector<string> codes(tab->size());
-	vector<char>* letters = tab;
-	string text = "";
-	for (int i = 0; i < tab->size(); i++)
-	{
-		codeLetter(letters->at(i), tree, "", codes[i]);
-		text += letters->at(i) + codes[i] + '\n';
-	}
-
-	fstream file;
-	file.open("dictionary.txt", ios::out);
-	if (file.good() == true)
-	{
-		file << text;
-	}
-	else
-		cout << "Brak dostepu do pliku" << endl;
-
-	file.close();
 }
 
 string decodeText(string codedText, Node* root)
